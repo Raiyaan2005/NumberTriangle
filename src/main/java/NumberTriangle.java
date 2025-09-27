@@ -1,4 +1,5 @@
 import java.io.*;
+import java.util.ArrayList;
 
 /**
  * This is the provided NumberTriangle class to be used in this coding task.
@@ -88,8 +89,19 @@ public class NumberTriangle {
      *
      */
     public int retrieve(String path) {
-        // TODO implement this method
-        return -1;
+        NumberTriangle head = this;
+        for (int i = 0; i < path.length(); i++)
+        {
+            if (path.charAt(i) == 'l')
+            {
+                head = head.left;
+            }
+            else if (path.charAt(i) == 'r')
+            {
+                head = head.right;
+            }
+        }
+        return head.root;
     }
 
     /** Read in the NumberTriangle structure from a file.
@@ -110,23 +122,38 @@ public class NumberTriangle {
         BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
 
 
-        // TODO define any variables that you want to use to store things
+        ArrayList<String[]> items = new ArrayList<>();
 
         // will need to return the top of the NumberTriangle,
         // so might want a variable for that.
-        NumberTriangle top = null;
-
+        NumberTriangle top;
         String line = br.readLine();
         while (line != null) {
-
-            // remove when done; this line is included so running starter code prints the contents of the file
-            System.out.println(line);
-
-            // TODO process the line
-
+            items.add(line.trim().split(" "));
             //read the next line
             line = br.readLine();
         }
+        ArrayList<ArrayList<NumberTriangle>> completeTriangle = new ArrayList<>();
+        for (String[] item : items)
+        {
+            ArrayList<NumberTriangle> row = new ArrayList<>();
+            for (String s : item)
+            {
+                row.add(new NumberTriangle(Integer.parseInt(s)));
+            }
+            completeTriangle.add(row);
+        }
+        for (int i = 1; i < completeTriangle.size(); i++)
+        {
+            ArrayList<NumberTriangle> current = completeTriangle.get(i - 1);
+            ArrayList<NumberTriangle> next = completeTriangle.get(i);
+            for (int j = 0; j < current.size(); j++)
+            {
+                current.get(j).setLeft(next.get(j));
+                current.get(j).setRight(next.get(j + 1));
+            }
+        }
+        top = completeTriangle.get(0).get(0);
         br.close();
         return top;
     }
